@@ -8,5 +8,5 @@ class PostEntity with _$PostEntity {
     required int id,
     required String title,
     required String description,
-  }) = _SomeEntity;
+  }) = _PostEntity;
 }

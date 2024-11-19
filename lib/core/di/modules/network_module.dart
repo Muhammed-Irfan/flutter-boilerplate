@@ -29,7 +29,7 @@ abstract class NetworkModule {
   @singleton
   @preResolve
   Future<Dio> dio(EnvConfig config, TokenInterceptor authInterceptor,
-          LoggingService talkerService) async =>
+          LoggingService talkerService,) async =>
       createDio(config, authInterceptor, talkerService);
 
   @singleton

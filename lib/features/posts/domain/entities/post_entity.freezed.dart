@@ -73,22 +73,22 @@ class _$PostEntityCopyWithImpl<$Res, $Val extends PostEntity>
 }
 
 /// @nodoc
-abstract class _$$SomeEntityImplCopyWith<$Res>
+abstract class _$$PostEntityImplCopyWith<$Res>
     implements $PostEntityCopyWith<$Res> {
-  factory _$$SomeEntityImplCopyWith(
-          _$SomeEntityImpl value, $Res Function(_$SomeEntityImpl) then) =
-      __$$SomeEntityImplCopyWithImpl<$Res>;
+  factory _$$PostEntityImplCopyWith(
+          _$PostEntityImpl value, $Res Function(_$PostEntityImpl) then) =
+      __$$PostEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({int id, String title, String description});
 }
 
 /// @nodoc
-class __$$SomeEntityImplCopyWithImpl<$Res>
-    extends _$PostEntityCopyWithImpl<$Res, _$SomeEntityImpl>
-    implements _$$SomeEntityImplCopyWith<$Res> {
-  __$$SomeEntityImplCopyWithImpl(
-      _$SomeEntityImpl _value, $Res Function(_$SomeEntityImpl) _then)
+class __$$PostEntityImplCopyWithImpl<$Res>
+    extends _$PostEntityCopyWithImpl<$Res, _$PostEntityImpl>
+    implements _$$PostEntityImplCopyWith<$Res> {
+  __$$PostEntityImplCopyWithImpl(
+      _$PostEntityImpl _value, $Res Function(_$PostEntityImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of PostEntity
@@ -100,7 +100,7 @@ class __$$SomeEntityImplCopyWithImpl<$Res>
     Object? title = null,
     Object? description = null,
   }) {
-    return _then(_$SomeEntityImpl(
+    return _then(_$PostEntityImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -119,8 +119,8 @@ class __$$SomeEntityImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$SomeEntityImpl implements _SomeEntity {
-  const _$SomeEntityImpl(
+class _$PostEntityImpl implements _PostEntity {
+  const _$PostEntityImpl(
       {required this.id, required this.title, required this.description});
 
   @override
@@ -139,7 +139,7 @@ class _$SomeEntityImpl implements _SomeEntity {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SomeEntityImpl &&
+            other is _$PostEntityImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.description, description) ||
@@ -154,15 +154,15 @@ class _$SomeEntityImpl implements _SomeEntity {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$SomeEntityImplCopyWith<_$SomeEntityImpl> get copyWith =>
-      __$$SomeEntityImplCopyWithImpl<_$SomeEntityImpl>(this, _$identity);
+  _$$PostEntityImplCopyWith<_$PostEntityImpl> get copyWith =>
+      __$$PostEntityImplCopyWithImpl<_$PostEntityImpl>(this, _$identity);
 }
 
-abstract class _SomeEntity implements PostEntity {
-  const factory _SomeEntity(
+abstract class _PostEntity implements PostEntity {
+  const factory _PostEntity(
       {required final int id,
       required final String title,
-      required final String description}) = _$SomeEntityImpl;
+      required final String description}) = _$PostEntityImpl;
 
   @override
   int get id;
@@ -175,6 +175,6 @@ abstract class _SomeEntity implements PostEntity {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$SomeEntityImplCopyWith<_$SomeEntityImpl> get copyWith =>
+  _$$PostEntityImplCopyWith<_$PostEntityImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

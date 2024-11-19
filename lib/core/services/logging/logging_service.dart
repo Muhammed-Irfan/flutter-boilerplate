@@ -9,12 +9,12 @@ class LoggingService {
 
   LoggingService(EnvConfig config) {
     _talker = TalkerFlutter.init(
-        settings: TalkerSettings(enabled: config.enableLogging));
+        settings: TalkerSettings(enabled: config.enableLogging),);
   }
 
   Talker get talker => _talker;
 
   void log(String message) => _talker.info(message);
 
-  void logError(dynamic error) => _talker.error(error);
+  void logError(Object error) => _talker.error(error);
 }

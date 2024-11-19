@@ -24,9 +24,10 @@ import '../../features/posts/domain/repositories/posts_repository.dart'
     as _i245;
 import '../../features/posts/domain/usecases/get_post_details.dart' as _i785;
 import '../../features/posts/domain/usecases/get_posts.dart' as _i1032;
-import '../../features/posts/presentation/bloc/post_bloc.dart' as _i26;
-import '../../features/posts/presentation/cubit/post_details_cubit.dart'
-    as _i152;
+import '../../features/posts/presentation/bloc/posts_detail/post_details_bloc.dart'
+    as _i157;
+import '../../features/posts/presentation/bloc/posts_list/post_bloc.dart'
+    as _i536;
 import '../config/env_config.dart' as _i373;
 import '../network/interceptors/token_interceptor.dart' as _i338;
 import '../services/auth/token_service.dart' as _i463;
@@ -118,9 +119,9 @@ Future<_i174.GetIt> init(
       () => _i785.GetPostDetails(gh<_i245.PostsRepository>()));
   gh.factory<_i1032.GetPosts>(
       () => _i1032.GetPosts(gh<_i245.PostsRepository>()));
-  gh.factory<_i152.PostDetailsCubit>(
-      () => _i152.PostDetailsCubit(gh<_i785.GetPostDetails>()));
-  gh.factory<_i26.PostsBloc>(() => _i26.PostsBloc(gh<_i1032.GetPosts>()));
+  gh.factory<_i157.PostDetailsBloc>(
+      () => _i157.PostDetailsBloc(gh<_i785.GetPostDetails>()));
+  gh.factory<_i536.PostsBloc>(() => _i536.PostsBloc(gh<_i1032.GetPosts>()));
   return getIt;
 }
 

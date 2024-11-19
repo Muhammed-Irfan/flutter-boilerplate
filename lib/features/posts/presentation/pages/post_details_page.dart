@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_starter/core/di/injection.dart';
-import 'package:flutter_starter/features/posts/presentation/cubit/post_details_cubit.dart';
-import 'package:flutter_starter/features/posts/presentation/widgets/error_view.dart';
-import 'package:flutter_starter/features/posts/presentation/widgets/loading_view.dart';
+import 'package:flutter_starter/core/presentation/widgets/base_view.dart';
+import 'package:flutter_starter/features/posts/presentation/bloc/posts_detail/post_details_bloc.dart';
+import 'package:flutter_starter/features/posts/presentation/widgets/post_details_content.dart';
 
 class PostDetailsPage extends StatelessWidget {
   final String postId;
@@ -16,7 +16,8 @@ class PostDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<PostDetailsCubit>()..fetchPostDetails(postId),
+      create: (_) => getIt<PostDetailsBloc>()
+        ..add(PostDetailsEvent.fetchDetails(postId)),
       child: PostDetailsView(postId: postId),
     );
   }
@@ -32,33 +33,24 @@ class PostDetailsView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Post Details'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              context.read<PostDetailsBloc>()
+                .add(PostDetailsEvent.refresh(postId));
+            },
+          ),
+        ],
       ),
-      body: BlocBuilder<PostDetailsCubit, PostDetailsState>(
-        builder: (context, state) {
-          return state.when(
-            loading: () => const LoadingView(),
-            loaded: (post) => SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    post.title,
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(post.description),
-                ],
-              ),
-            ),
-            error: (message) => ErrorView(
-              message: message,
-              onRetry: () {
-                context.read<PostDetailsCubit>().fetchPostDetails(postId);
-              },
-            ),
-          );
-        },
+      body: BaseView<PostDetailsBloc, PostDetailsState>(
+        onLoaded: (state) => RefreshIndicator(
+          onRefresh: () async {
+            context.read<PostDetailsBloc>()
+              .add(PostDetailsEvent.refresh(postId));
+          },
+          child: PostDetailsContent(post: state.post),
+        ),
       ),
     );
   }

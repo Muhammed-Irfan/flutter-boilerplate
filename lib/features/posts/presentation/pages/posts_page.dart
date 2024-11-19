@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:flutter_starter/core/di/injection.dart';
-import 'package:flutter_starter/features/posts/presentation/bloc/post_bloc.dart';
-import 'package:flutter_starter/features/posts/presentation/widgets/error_view.dart';
-import 'package:flutter_starter/features/posts/presentation/widgets/loading_view.dart';
-import 'package:flutter_starter/features/posts/presentation/widgets/some_list_item.dart';
+import 'package:flutter_starter/core/presentation/widgets/base_view.dart';
+import 'package:flutter_starter/features/posts/presentation/bloc/posts_list/post_bloc.dart';
+import 'package:flutter_starter/features/posts/presentation/widgets/posts_list_item.dart';
 
 class PostsPage extends StatelessWidget {
   const PostsPage({super.key});
@@ -36,29 +34,22 @@ class PostsView extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<PostsBloc, PostsState>(
-        builder: (context, state) {
-          return state.when(
-            loading: () => const LoadingView(),
-            loaded: (data) => RefreshIndicator(
-              onRefresh: () async {
-                context.read<PostsBloc>().add(const PostsEvent.fetchData());
-              },
-              child: ListView.builder(
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  return SomeListItem(id: data[index].id, title: data[index].title);
-                },
-              ),
-            ),
-            error: (message) => ErrorView(
-              message: message,
-              onRetry: () {
-                context.read<PostsBloc>().add(const PostsEvent.fetchData());
-              },
-            ),
-          );
-        },
+      body: BaseView<PostsBloc, PostState>(
+        onLoaded: (state) => RefreshIndicator(
+          onRefresh: () async {
+            context.read<PostsBloc>().add(const PostsEvent.fetchData());
+          },
+          child: ListView.builder(
+            itemCount: state.posts.length,
+            itemBuilder: (context, index) {
+              final post = state.posts[index];
+              return PostListItem(
+                id: post.id,
+                title: post.title,
+              );
+            },
+          ),
+        ),
       ),
     );
   }
