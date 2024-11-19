@@ -14,7 +14,7 @@ A Flutter project using Clean Architecture with BLoC pattern, dependency injecti
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/flutter_boilerplate.git
+git clone https://github.com/Muhammed-Irfan/flutter_boilerplate.git
 cd flutter_boilerplate
 ```
 
@@ -31,8 +31,6 @@ Create the following environment files in the root directory:
 ```bash
 # .dev.env
 API_BASE_URL=https://dev-api.example.com
-API_KEY=your_dev_api_key
-ENABLE_LOGGING=true
 ```
 
 ### 4. Generate Required Files
@@ -47,17 +45,17 @@ dart run build_runner build --delete-conflicting-outputs
 
 #### Development Environment
 ```bash
-flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=.dev.env
+flutter run --flavor dev -t lib/main_dev.dart
 ```
 
 #### Staging Environment
 ```bash
-flutter run --flavor staging -t lib/main_staging.dart --dart-define-from-file=.staging.env
+flutter run --flavor staging -t lib/main_staging.dart
 ```
 
 #### Production Environment
 ```bash
-flutter run --flavor prod -t lib/main.dart --dart-define-from-file=.prod.env
+flutter run --flavor prod -t lib/main_prod.dart
 ```
 
 ### 6. Building the App
@@ -65,25 +63,25 @@ flutter run --flavor prod -t lib/main.dart --dart-define-from-file=.prod.env
 #### Android
 ```bash
 # Development
-flutter build apk --flavor dev -t lib/main_dev.dart --dart-define-from-file=.dev.env
+flutter build apk --flavor dev -t lib/main_dev.dart
 
 # Staging
-flutter build apk --flavor staging -t lib/main_staging.dart --dart-define-from-file=.staging.env
+flutter build apk --flavor staging -t lib/main_staging.dart
 
 # Production
-flutter build apk --flavor prod -t lib/main.dart --dart-define-from-file=.prod.env
+flutter build apk --flavor prod -t lib/main_prod.dart
 ```
 
 #### iOS
 ```bash
 # Development
-flutter build ios --flavor dev -t lib/main_dev.dart --dart-define-from-file=.dev.env
+flutter build ipa --flavor dev -t lib/main_dev.dart
 
 # Staging
-flutter build ios --flavor staging -t lib/main_staging.dart --dart-define-from-file=.staging.env
+flutter build ipa --flavor staging -t lib/main_staging.dart
 
 # Production
-flutter build ios  -t lib/main.dart --dart-define-from-file=.prod.env
+flutter build ipa --flavor prod -t lib/main_prod.dart
 ```
 
 ## Project Structure
@@ -94,6 +92,7 @@ lib/
 ├── main.dart
 ├── main_dev.dart
 ├── main_staging.dart
+├── main_prod.dart
 ├── core/
 │   ├── cache/
 │   ├── config/
@@ -102,7 +101,8 @@ lib/
 │   ├── error/
 │   ├── network/
 │   ├── router/
-│   └── services/
+│   ├── services/
+│   └── theme/
 ├── features/
 │   └── some_feature/
 │       ├── data/
@@ -114,7 +114,7 @@ lib/
 
 ## Architecture
 
-This project follows Clean Architecture principles with the following layers:
+This project follows Clean Architecture principles with three main layers:
 
 - **Domain**: Business logic and entities
 - **Data**: Data sources, repositories, and models
@@ -127,10 +127,11 @@ This project follows Clean Architecture principles with the following layers:
 - Dependency Injection using get_it and injectable
 - Environment-specific Configurations
 - Secure Storage and SharedPreferences
-- HTTP Client with Dio
+- HTTP Client with Dio and Interceptors
 - Route Management with go_router
 - Error Handling
 - Code Generation with freezed
+- Multi-flavor support (dev, staging, prod)
 
 ## Contributing
 
