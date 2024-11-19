@@ -1,0 +1,8 @@
+#include "Generated.xcconfig"
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
+
+FLUTTER_TARGET=lib/main_staging.dart
+ASSET_PREFIX=staging
+BUNDLE_NAME=MyApp Staging
+BUNDLE_DISPLAY_NAME=MyApp Staging
+PRODUCT_BUNDLE_IDENTIFIER=com.example.myapp.staging 
