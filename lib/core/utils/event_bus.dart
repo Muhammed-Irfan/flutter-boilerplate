@@ -1,10 +1,18 @@
 import 'dart:async';
 
+import 'package:injectable/injectable.dart';
+
 /// A simple event bus implementation using streams.
+/// This pattern is particularly useful for:
+/// - Cross-feature communication
+/// - Updating multiple widgets when data changes
+/// - Handling global app state changes
+/// - Implementing pub/sub patterns in your app
+@lazySingleton
 class EventBus {
   // Factory constructor to return the same instance
   factory EventBus() => _instance;
-  
+
   // Private constructor
   EventBus._();
 
