@@ -1,4 +1,5 @@
 import 'package:flutter_starter/core/error/exceptions.dart';
+import 'package:flutter_starter/core/utils/safety_utils.dart';
 import 'package:flutter_starter/features/posts/data/datasources/remote/posts_remote_datasource.dart';
 import 'package:flutter_starter/features/posts/data/models/posts_model.dart';
 import 'package:flutter_starter/features/posts/domain/entities/post_entity.dart';
@@ -13,14 +14,18 @@ class PostsRepositoryImpl implements PostsRepository {
   PostsRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<AppException, List<PostEntity>>> getPosts() async {
-    final result = await remoteDataSource.getPosts();
-    return result.map((models) => models.map((model) => model.toEntity()).toList());
+  Future<Either<AppException, List<PostEntity>>> getPosts() {
+    return executeSafelyWithMapping(
+      remoteDataSource.getPosts,
+      (models) => models.map((model) => model.toEntity()).toList(),
+    );
   }
 
   @override
-  Future<Either<AppException, PostEntity>> getPostById(String id) async {
-    final result = await remoteDataSource.getPostById(id);
-    return result.map((model) => model.toEntity());
+  Future<Either<AppException, PostEntity>> getPostById(String id) {
+    return executeSafelyWithMapping(
+      () => remoteDataSource.getPostById(id),
+      (model) => model.toEntity(),
+    );
   }
 }

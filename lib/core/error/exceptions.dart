@@ -10,6 +10,13 @@ class AppException implements Exception {
   /// and the [prefix] parameter represents the prefix for the exception.
   AppException({String? message, this.prefix, this.stackTrace}) : message = message ?? 'Something went wrong.';
 
+  factory AppException.fromException(Object e, {String? prefix, StackTrace? stackTrace}) {
+    if (e is AppException) {
+      return e;
+    }
+    return AppException(message: e.toString(), prefix: prefix, stackTrace: stackTrace);
+  }
+
   @override
   String toString() {
     return '$prefix$message'; // Returns the formatted error message

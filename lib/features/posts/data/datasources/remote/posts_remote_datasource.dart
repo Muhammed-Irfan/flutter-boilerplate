@@ -18,17 +18,11 @@ class PostsRemoteDataSourceImpl implements PostsRemoteDataSource {
 
   @override
   Future<Either<AppException, List<PostModel>>> getPosts() {
-    return executeSafely(() async {
-      final response = await _apiClient.getPosts();
-      return response.data;
-    });
+    return executeSafelyAndRetrieveResponseData(_apiClient.getPosts);
   }
 
   @override
   Future<Either<AppException, PostModel>> getPostById(String id) {
-    return executeSafely(() async {
-      final response = await _apiClient.getPostById(id);
-      return response.data;
-    });
+    return executeSafelyAndRetrieveResponseData(() => _apiClient.getPostById(id));
   }
 }
