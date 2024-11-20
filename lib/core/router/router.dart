@@ -35,7 +35,7 @@ final router = GoRouter(
           path: RoutePaths.logs,
           name: RouteNames.logs,
           builder: (context, state) => TalkerScreen(
-            talker: state.extra as Talker,
+            talker: state.extra! as Talker,
           ),
         ),
       ],

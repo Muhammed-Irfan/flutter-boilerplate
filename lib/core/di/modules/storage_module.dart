@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 @module
 abstract class StorageModule {
   @preResolve
-  @singleton
+  @lazySingleton
   Future<SharedPreferencesWithCache> get prefs =>
       SharedPreferencesWithCache.create(cacheOptions: const SharedPreferencesWithCacheOptions());
 

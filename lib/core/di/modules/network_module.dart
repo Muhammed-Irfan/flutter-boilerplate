@@ -28,12 +28,15 @@ abstract class NetworkModule {
 
   @singleton
   @preResolve
-  Future<Dio> dio(EnvConfig config, TokenInterceptor authInterceptor,
-          LoggingService talkerService,) async =>
+  Future<Dio> dio(
+    EnvConfig config,
+    TokenInterceptor authInterceptor,
+    LoggingService talkerService,
+  ) async =>
       createDio(config, authInterceptor, talkerService);
 
-  @singleton
-  PostsApiClient someApiClient(Dio dio, EnvConfig config) => PostsApiClient(
+  @lazySingleton
+  PostsApiClient postApiClient(Dio dio, EnvConfig config) => PostsApiClient(
         dio,
         baseUrl: config.baseUrl,
         errorLogger: CustomParseErrorLogger(),

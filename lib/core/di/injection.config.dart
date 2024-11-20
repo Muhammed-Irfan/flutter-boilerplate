@@ -56,11 +56,11 @@ Future<_i174.GetIt> init(
   final storageModule = _$StorageModule();
   final envModule = _$EnvModule();
   final networkModule = _$NetworkModule();
-  await gh.singletonAsync<_i460.SharedPreferencesWithCache>(
+  gh.singleton<_i558.FlutterSecureStorage>(() => storageModule.secureStorage);
+  await gh.lazySingletonAsync<_i460.SharedPreferencesWithCache>(
     () => storageModule.prefs,
     preResolve: true,
   );
-  gh.singleton<_i558.FlutterSecureStorage>(() => storageModule.secureStorage);
   await gh.singletonAsync<_i373.EnvConfig>(
     () => envModule.devConfig(),
     registerFor: {_dev},
@@ -107,7 +107,7 @@ Future<_i174.GetIt> init(
     ),
     preResolve: true,
   );
-  gh.singleton<_i1048.PostsApiClient>(() => networkModule.someApiClient(
+  gh.lazySingleton<_i1048.PostsApiClient>(() => networkModule.postApiClient(
         gh<_i361.Dio>(),
         gh<_i373.EnvConfig>(),
       ));
