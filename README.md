@@ -29,7 +29,7 @@ flutter pub get
 Create the following environment files in the root directory:
 
 ```bash
-# .dev.env
+# .dev.env .prod.env .staging.env
 API_BASE_URL=https://dev-api.example.com
 ```
 
@@ -87,6 +87,7 @@ flutter build ipa --flavor prod -t lib/main_prod.dart
 ## Project Structure
 
 ```
+
 lib/
 ├── app.dart
 ├── main.dart
@@ -94,22 +95,34 @@ lib/
 ├── main_staging.dart
 ├── main_prod.dart
 ├── core/
-│   ├── cache/
-│   ├── config/
-│   ├── constants/
-│   ├── di/
-│   ├── error/
-│   ├── network/
-│   ├── router/
-│   ├── services/
-│   └── theme/
+│ ├── cache/
+│ ├── config/
+│ ├── constants/
+│ ├── di/
+│ ├── error/
+│ ├── events/
+│ ├── network/
+│ │ ├── api_endpoints.dart
+│ │ ├── dio_client.dart
+│ │ └── interceptors/
+│ ├── router/
+│ ├── services/
+│ │ ├── auth/
+│ │ ├── logging/
+│ │ └── storage/
+│ ├── types/
+│ └── utils/
 ├── features/
-│   └── some_feature/
-│       ├── data/
-│       ├── domain/
-│       └── presentation/
+│ ├── auth/
+│ │ ├── data/
+│ │ ├── domain/
+│ │ └── presentation/
+│ └── posts/
+│ ├── data/
+│ ├── domain/
+│ └── presentation/
 └── shared/
-    └── presentation/
+└── presentation/
 ```
 
 ## Architecture
@@ -122,16 +135,29 @@ This project follows Clean Architecture principles with three main layers:
 
 ## Key Features
 
-- Clean Architecture
+- Clean Architecture with Feature-First Organization
 - BLoC Pattern for State Management
 - Dependency Injection using get_it and injectable
 - Environment-specific Configurations
 - Secure Storage and SharedPreferences
 - HTTP Client with Dio and Interceptors
+  - Token Refresh Handling
+  - Error Interceptor
+  - Logging Interceptor (non-production)
 - Route Management with go_router
-- Error Handling
+- Comprehensive Error Handling
 - Code Generation with freezed
 - Multi-flavor support (dev, staging, prod)
+- Event Bus for Cross-Feature Communication
+- Talker for Advanced Logging
+- Retrofit for Type-safe API Clients
+
+## Security Features
+
+- Secure Token Storage using flutter_secure_storage
+- Automatic Token Refresh
+- Session Management
+- ProGuard Rules for Android
 
 ## Contributing
 
