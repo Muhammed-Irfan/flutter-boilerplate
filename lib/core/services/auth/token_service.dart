@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_starter/core/constants/preferences.dart';
 import 'package:flutter_starter/core/error/exceptions.dart';
+import 'package:flutter_starter/core/network/api_endpoints.dart';
 import 'package:flutter_starter/core/services/storage/storage_service_provider.dart';
 import 'package:injectable/injectable.dart';
 
@@ -13,9 +14,8 @@ abstract class TokenService {
   Future<void> deleteTokens();
 
   // Token Operations
-  Future<bool> hasValidToken();
   Future<String?> refreshToken();
-  Future<void> logout();
+  Future<Map<String, dynamic>> setBearerToken();
 }
 
 @Singleton(as: TokenService)
@@ -51,32 +51,16 @@ class TokenServiceImpl implements TokenService {
   }
 
   @override
-  Future<bool> hasValidToken() async {
-    final token = await getAccessToken();
-    if (token == null) return false;
-
-    // Optional: Add JWT token expiration check
-    // try {
-    //   final jwt = JWT.decode(token);
-    //   return !jwt.isExpired;
-    // } catch (e) {
-    //   return false;
-    // }
-
-    return true;
-  }
-
-  @override
   Future<String?> refreshToken() async {
     try {
       final currentRefreshToken = await getRefreshToken();
 
       if (currentRefreshToken == null) {
-        throw UnauthorizedException('No refresh token available');
+        throw UnauthorizedException();
       }
 
       final response = await _dio.post(
-        '/auth/refresh',
+        ApiEndpoints.authRefresh,
         data: {'refresh_token': currentRefreshToken},
       );
 
@@ -89,30 +73,21 @@ class TokenServiceImpl implements TokenService {
       }
 
       return newAccessToken;
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        await logout();
-        throw UnauthorizedException('Refresh token expired');
-      }
-      throw ServerException(e.message ?? 'Failed to refresh token');
+    } catch (e) {
+      throw UnauthorizedException('Failed to refresh token');
     }
   }
 
   @override
-  Future<void> logout() async {
-    try {
-      // Optional: Call logout endpoint
-      final token = await getAccessToken();
-      if (token != null) {
-        await _dio.post(
-          '/auth/logout',
-          options: Options(headers: {'Authorization': 'Bearer $token'}),
-        );
-      }
-    } catch (_) {
-      // Ignore errors during logout
-    } finally {
-      await deleteTokens();
+  Future<Map<String, dynamic>> setBearerToken() async {
+    final accessToken = await getAccessToken();
+
+    if (accessToken == null) {
+      return {};
     }
+
+    return {
+      'Authorization': 'Bearer $accessToken',
+    };
   }
 }

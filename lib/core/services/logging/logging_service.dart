@@ -9,7 +9,8 @@ class LoggingService {
 
   LoggingService(EnvConfig config) {
     _talker = TalkerFlutter.init(
-        settings: TalkerSettings(enabled: config.enableLogging),);
+      settings: TalkerSettings(enabled: config.enableLogging),
+    );
   }
 
   Talker get talker => _talker;

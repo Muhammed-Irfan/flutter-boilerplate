@@ -2,42 +2,43 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter_starter/core/error/exceptions.dart';
+import 'package:flutter_starter/core/events/auth_events.dart';
+import 'package:flutter_starter/core/network/api_endpoints.dart';
 import 'package:flutter_starter/core/services/auth/token_service.dart';
+import 'package:flutter_starter/core/utils/event_bus.dart';
 import 'package:injectable/injectable.dart';
 
 @singleton
 class TokenInterceptor extends Interceptor {
   final TokenService _tokenService;
+  final EventBus _eventBus;
+
   bool _isRefreshing = false;
   final _pendingRequests = <RequestOptions, ErrorInterceptorHandler>{};
 
-  TokenInterceptor(this._tokenService);
+  TokenInterceptor(this._tokenService, this._eventBus);
 
   @override
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final token = await _tokenService.getAccessToken();
-
-    //Add bearer token
-    if (token != null) {
-      options.headers['Authorization'] = 'Bearer $token';
+    // Skip token for auth endpoints
+    if (_isAuthEndpoint(options.path)) {
+      return handler.next(options);
     }
 
+    // Add token to headers if available
+    options.headers.addAll(await _tokenService.setBearerToken());
     handler.next(options);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.response?.statusCode == 401) {
+    if (err.response?.statusCode == 401 && !_isAuthEndpoint(err.requestOptions.path)) {
       try {
         if (!_isRefreshing) {
           _isRefreshing = true;
-
-          if (!await _tokenService.hasValidToken()) {
-            throw UnauthorizedException();
-          }
 
           final newToken = await _tokenService.refreshToken();
           if (newToken != null) {
@@ -53,14 +54,34 @@ class TokenInterceptor extends Interceptor {
           _pendingRequests[err.requestOptions] = handler;
         }
       } on UnauthorizedException {
-        await _tokenService.logout();
+        _eventBus.fire(
+          const SessionExpiredEvent(
+            reason: 'Session expired. Please login again.',
+          ),
+        );
+        _rejectPendingRequests();
         handler.next(err);
+      } catch (error) {
+        handler.reject(
+          DioException(
+            requestOptions: err.requestOptions,
+            error: AppException.fromException(error),
+          ),
+        );
       } finally {
         _isRefreshing = false;
       }
     } else {
       handler.next(err);
     }
+  }
+
+  bool _isAuthEndpoint(String path) {
+    final authPaths = [
+      //ApiEndpoints.login,
+      ApiEndpoints.authRefresh,
+    ];
+    return authPaths.any((endpoint) => path.contains(endpoint));
   }
 
   Future<Response<dynamic>> _retryRequest(
@@ -81,6 +102,20 @@ class TokenInterceptor extends Interceptor {
       queryParameters: requestOptions.queryParameters,
       options: options,
     );
+  }
+
+  void _rejectPendingRequests() {
+    final requests = Map<RequestOptions, ErrorInterceptorHandler>.from(_pendingRequests);
+    _pendingRequests.clear();
+
+    for (final entry in requests.entries) {
+      entry.value.reject(
+        DioException(
+          requestOptions: entry.key,
+          error: UnauthorizedException('Session expired. Please login again.'),
+        ),
+      );
+    }
   }
 
   Future<void> _processPendingRequests(String newToken) async {

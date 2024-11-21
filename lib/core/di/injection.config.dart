@@ -14,6 +14,13 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
+import '../../features/auth/data/datasources/auth_remote_data_source.dart'
+    as _i107;
+import '../../features/auth/data/repositories/auth_repository_impl.dart'
+    as _i153;
+import '../../features/auth/domain/repositories/auth_repository.dart' as _i787;
+import '../../features/auth/domain/usecases/logout.dart' as _i597;
+import '../../features/auth/presentation/bloc/auth_bloc.dart' as _i797;
 import '../../features/posts/data/datasources/remote/post_api_client.dart'
     as _i1048;
 import '../../features/posts/data/datasources/remote/posts_remote_datasource.dart'
@@ -34,6 +41,7 @@ import '../services/auth/token_service.dart' as _i463;
 import '../services/logging/logging_service.dart' as _i1022;
 import '../services/storage/storage_service.dart' as _i968;
 import '../services/storage/storage_service_provider.dart' as _i576;
+import '../utils/event_bus.dart' as _i409;
 import 'modules/env_module.dart' as _i955;
 import 'modules/network_module.dart' as _i851;
 import 'modules/storage_module.dart' as _i148;
@@ -61,6 +69,7 @@ Future<_i174.GetIt> init(
     () => storageModule.prefs,
     preResolve: true,
   );
+  gh.lazySingleton<_i409.EventBus>(() => _i409.EventBus());
   await gh.singletonAsync<_i373.EnvConfig>(
     () => envModule.devConfig(),
     registerFor: {_dev},
@@ -97,8 +106,14 @@ Future<_i174.GetIt> init(
         gh<_i361.Dio>(instanceName: 'token-dio'),
         gh<_i576.StorageServiceProvider>(),
       ));
-  gh.singleton<_i338.TokenInterceptor>(
-      () => _i338.TokenInterceptor(gh<_i463.TokenService>()));
+  gh.singleton<_i338.TokenInterceptor>(() => _i338.TokenInterceptor(
+        gh<_i463.TokenService>(),
+        gh<_i409.EventBus>(),
+      ));
+  gh.factory<_i107.AuthRemoteDataSource>(() => _i107.AuthRemoteDataSourceImpl(
+        gh<_i361.Dio>(instanceName: 'token-dio'),
+        gh<_i463.TokenService>(),
+      ));
   await gh.singletonAsync<_i361.Dio>(
     () => networkModule.dio(
       gh<_i373.EnvConfig>(),
@@ -107,14 +122,24 @@ Future<_i174.GetIt> init(
     ),
     preResolve: true,
   );
+  gh.factory<_i787.AuthRepository>(
+      () => _i153.AuthRepositoryImpl(gh<_i107.AuthRemoteDataSource>()));
   gh.lazySingleton<_i1048.PostsApiClient>(() => networkModule.postApiClient(
         gh<_i361.Dio>(),
         gh<_i373.EnvConfig>(),
       ));
   gh.factory<_i59.PostsRemoteDataSource>(
       () => _i59.PostsRemoteDataSourceImpl(gh<_i1048.PostsApiClient>()));
+  gh.factory<_i597.Logout>(() => _i597.Logout(
+        gh<_i463.TokenService>(),
+        gh<_i787.AuthRepository>(),
+      ));
   gh.factory<_i245.PostsRepository>(
       () => _i675.PostsRepositoryImpl(gh<_i59.PostsRemoteDataSource>()));
+  gh.factory<_i797.AuthBloc>(() => _i797.AuthBloc(
+        gh<_i597.Logout>(),
+        gh<_i409.EventBus>(),
+      ));
   gh.factory<_i785.GetPostDetails>(
       () => _i785.GetPostDetails(gh<_i245.PostsRepository>()));
   gh.factory<_i1032.GetPosts>(

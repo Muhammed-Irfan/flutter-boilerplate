@@ -1,8 +1,7 @@
-import 'package:flutter_starter/core/error/exceptions.dart';
-import 'package:fpdart/fpdart.dart';
+import 'package:flutter_starter/core/types/result.dart';
 
 abstract class UseCase<Type, Params> {
-  Future<Either<AppException, Type>> call(Params params);
+  Future<Result<Type>> call(Params params);
 }
 
 class NoParams {
