@@ -1,3 +1,4 @@
+import 'package:flutter_starter/core/models/navigation_result.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'base_bloc_state.freezed.dart';
@@ -8,4 +9,5 @@ class BaseState<T> with _$BaseState<T> {
   const factory BaseState.loading() = Loading;
   const factory BaseState.loaded(T data) = Loaded<T>;
   const factory BaseState.error(String message) = Error;
+  const factory BaseState.navigate(NavigationResult navigation) = Navigate;
 }
